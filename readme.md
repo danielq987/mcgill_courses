@@ -1,6 +1,6 @@
 # Hooray
 
-Ran this script to fetch from each of the 527 pages and extract all the relevant course page links.
+Ran this script to fetch from each of the 527 pages and extract all the relevant course page links to a single file `raw_links`.
 ```bash
 #!/bin/bash
 
@@ -23,12 +23,13 @@ for i in {0..526}; do
 done
 ```
 
-Ran this convoluted line to transform each link into a proper url and into the correct format for curl (the tool which fetches the pages).
+Ran this convoluted line to transform each link in `raw_links` into a proper url and into the correct format for curl (the tool which fetches the pages).
+Writes to `curl_config`.
 ```bash
 sed -e 's/^/url=\"https:\/\/mcgill.ca/' raw_links | sed -e 's/$/\"/' | sed -e '/.*/{p;s/.*\//output=\"test\//g;}' > curl_config
 ```
 
-And then this line fetches all the pages and dumps each html page into a separate file. Parallel mode because otherwise it would take forever.
+And then this line fetches all the pages using the config file `curl_config` and dumps each html page into a separate file. Parallel mode because otherwise it would take forever.
 ```bash
 curl --parallel --parallel-immediate --parallel-max 50 --config curl_config --location
 ```
